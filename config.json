@@ -1,5 +1,5 @@
 {
-  "freq": "1H",
+  "frequency": "1H",
   "prediction_length": 8,
   "features_aggregation_config" : {
                               "high": "max",
@@ -13,7 +13,6 @@
                               "taker_buy_quote_asset_volume": "sum"
                           },
   "features" : ["volume", "high", "low", "number_of_trades", "RSI_72", "FWMA_72"],
-  "prediction_length": 8,
   "param_grid": {
                  "n_forecasts": [8],
                  "n_lags": [8],
@@ -21,6 +20,7 @@
                  "batch_size": [76],
                  "epochs": [250],
                  "learning_rate": [0.2],
-                 "ar_sparsity": [0.3, 0.5, 0.7],
-  "models_dir": "notebooks/models.pickle"
+                 "ar_sparsity": [0.3, 0.5, 0.7] },
+  "models_dir": "notebooks/models.pickle",
+  "data_dir": "notebooks/"
 }
