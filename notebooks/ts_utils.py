@@ -420,7 +420,7 @@ def utils_evaluate_ts_model(dtf, conf=0.95, title=None, plot=True, figsize=(20, 
             ax2 = fig.add_subplot(2, 2, 2, sharey=ax1)
             ax3 = fig.add_subplot(2, 2, 3)
             ax4 = fig.add_subplot(2, 2, 4)
-            ### training
+            ### forecaster
             dtf[pd.notnull(dtf["model"])][["ts", "model"]].plot(color=["black", "green"], title="Train (obs: " + str(
                 len(dtf[pd.notnull(dtf["model"])])) + ")", grid=True, ax=ax1)
             ax1.set(xlabel=None)
@@ -979,33 +979,33 @@ def forecast_autoregressive(ts, model=None, pred_ahead=None, end=None, freq="D",
 #                            RNN                                              #
 ###############################################################################
 # '''
-# Plot loss and metrics of keras training.
+# Plot loss and metrics of keras forecaster.
 # '''
 
 
-# def utils_plot_keras_training(training):
-#     metrics = [k for k in training.history.keys() if ("loss" not in k) and ("val" not in k)]
+# def utils_plot_keras_training(forecaster):
+#     metrics = [k for k in forecaster.history.keys() if ("loss" not in k) and ("val" not in k)]
 #     fig, ax = plt.subplots(nrows=1, ncols=2, sharey=True, figsize=(15, 3))
 
-#     ## training
+#     ## forecaster
 #     ax[0].set(title="Training")
 #     ax11 = ax[0].twinx()
-#     ax[0].plot(training.history['loss'], color='black')
+#     ax[0].plot(forecaster.history['loss'], color='black')
 #     ax[0].set_xlabel('Epochs')
 #     ax[0].set_ylabel('Loss', color='black')
 #     for metric in metrics:
-#         ax11.plot(training.history[metric], label=metric)
+#         ax11.plot(forecaster.history[metric], label=metric)
 #     ax11.set_ylabel("Score", color='steelblue')
 #     ax11.legend()
 
 #     ## validation
 #     ax[1].set(title="Validation")
 #     ax22 = ax[1].twinx()
-#     ax[1].plot(training.history['val_loss'], color='black')
+#     ax[1].plot(forecaster.history['val_loss'], color='black')
 #     ax[1].set_xlabel('Epochs')
 #     ax[1].set_ylabel('Loss', color='black')
 #     for metric in metrics:
-#         ax22.plot(training.history['val_' + metric], label=metric)
+#         ax22.plot(forecaster.history['val_' + metric], label=metric)
 #     ax22.set_ylabel("Score", color="steelblue")
 #     plt.show()
 
@@ -1120,22 +1120,22 @@ def forecast_autoregressive(ts, model=None, pred_ahead=None, end=None, freq="D",
 
 #     ## train
 #     verbose = 1 if epochs > 1 else 1
-#     training = model.fit(x=X_train, y=y_train, batch_size=batch_size, epochs=epochs, shuffle=True, verbose=verbose,
+#     forecaster = model.fit(x=X_train, y=y_train, batch_size=batch_size, epochs=epochs, shuffle=True, verbose=verbose,
 #                          validation_split=0.3)
 #     dtf_train = ts_train.to_frame(name="ts")
-#     dtf_train["model"] = utils_fitted_lstm(ts_train, training.model, scaler, exog)
+#     dtf_train["model"] = utils_fitted_lstm(ts_train, forecaster.model, scaler, exog)
 #     dtf_train["model"] = dtf_train["model"].fillna(method='bfill')
 
 #     ## test
 #     last_s_obs = ts_train[-s:]
-#     preds = utils_predict_lstm(last_s_obs, training.model, scaler, pred_ahead=len(ts_test), exog=None)
+#     preds = utils_predict_lstm(last_s_obs, forecaster.model, scaler, pred_ahead=len(ts_test), exog=None)
 #     dtf_test = ts_test.to_frame(name="ts").merge(pd.DataFrame(data=preds, index=ts_test.index, columns=["forecast"]),
 #                                                  how='left', left_index=True, right_index=True)
 
 #     ## evaluate
 #     dtf = dtf_train.append(dtf_test)
 #     dtf = utils_evaluate_ts_model(dtf, conf=conf, figsize=figsize, title="LSTM (memory:" + str(s) + ")")
-#     return dtf, training.model
+#     return dtf, forecaster.model
 
 
 # '''
@@ -1161,9 +1161,9 @@ def forecast_autoregressive(ts, model=None, pred_ahead=None, end=None, freq="D",
 #     ## fit
 #     s = model.input_shape[1]
 #     X, y, scaler = utils_preprocess_lstm(ts, scaler=None, exog=None, s=s)
-#     training = model.fit(x=X, y=y, batch_size=1, epochs=epochs, shuffle=True, verbose=0, validation_split=0.3)
+#     forecaster = model.fit(x=X, y=y, batch_size=1, epochs=epochs, shuffle=True, verbose=0, validation_split=0.3)
 #     dtf = ts.to_frame(name="ts")
-#     dtf["model"] = utils_fitted_lstm(ts, training.model, scaler, None)
+#     dtf["model"] = utils_fitted_lstm(ts, forecaster.model, scaler, None)
 #     dtf["model"] = dtf["model"].fillna(method='bfill')
 
 #     ## index
@@ -1171,7 +1171,7 @@ def forecast_autoregressive(ts, model=None, pred_ahead=None, end=None, freq="D",
 
 #     ## forecast
 #     last_s_obs = ts[-s:]
-#     preds = utils_predict_lstm(last_s_obs, training.model, scaler, pred_ahead=len(index), exog=None)
+#     preds = utils_predict_lstm(last_s_obs, forecaster.model, scaler, pred_ahead=len(index), exog=None)
 #     dtf = dtf.append(pd.DataFrame(data=preds, index=index, columns=["forecast"]))
 
 #     ## add intervals and plot
