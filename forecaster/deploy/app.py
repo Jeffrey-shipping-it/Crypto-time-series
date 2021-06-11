@@ -41,9 +41,4 @@ if __name__ == "__main__":
     logger.setLevel(logging.INFO)
     logging.info("Initiating prediction API")
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--config', type=str)
-    args, _ = parser.parse_known_args()
-    config = json.load(open(args.config))
-
     app.run(debug=True)
