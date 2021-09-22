@@ -43,9 +43,9 @@ class NeuralProphetFitting:
         """
         for ticker, df in data_dict.items():
             df = df.reset_index().rename(columns={'close': 'y', 'open_time': 'ds'})
-            df_new, num = self.add_missing_dates_nan(df, self.frequency)
+            df_new, num = self.add_missing_dates_nan(df, self.config['frequency'])
             df_new.interpolate(method='linear', limit_direction='forward', inplace=True)
-            df_new = df_new[['ds', 'y'] + self.features]
+            df_new = df_new[['ds', 'y'] + self.config['features']]
             data_dict[ticker] = df_new
         return data_dict
 
@@ -80,7 +80,7 @@ class NeuralProphetFitting:
                 m = m.add_lagged_regressor(name=feature)
 
             m.highlight_nth_step_ahead_of_each_forecast(step_number=m.n_forecasts)
-            df = df[self.features + ['y', 'ds']]
+            df = df[self.config['features'] + ['y', 'ds']]
             metrics = m.fit(df
                             , freq=self.config["frequency"]
                             , validate_each_epoch=False
@@ -105,6 +105,7 @@ class NeuralProphetFitting:
         all_params = [dict(zip(param_grid.keys(), v)) for v in itertools.product(*param_grid.values())]
         logging.info(f"Fitting {len(all_params)} models")
         for params in all_params:
+            logging.info(f"fitting model with the following parameters: {params}")
             m = NeuralProphet(**params,
                               yearly_seasonality=False,
                               weekly_seasonality=False,
@@ -114,7 +115,7 @@ class NeuralProphetFitting:
             for feature in self.config["features"]:
                 m = m.add_lagged_regressor(name=feature)
             m.highlight_nth_step_ahead_of_each_forecast(step_number=m.n_forecasts)
-            df = df[self.features + ['y', 'ds']]
+            df = df[self.config['features'] + ['y', 'ds']]
             metrics = m.fit(df
                             , freq=self.config["frequency"]
                             , validate_each_epoch=True

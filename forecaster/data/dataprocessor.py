@@ -1,7 +1,7 @@
 import pandas as pd
 import pandas_ta as ta
 import os
-
+import logging
 
 class DataProcessor:
     """
@@ -22,6 +22,8 @@ class DataProcessor:
         :return: dictionary with ticker as key and corresponding df as value.
         """
         file_list = [file for file in fill_dir if file.endswith(extension)]
+        logging.info(os.getcwd())
+        logging.info(file_list)
         data_dict = {}
         for file in file_list:
             data_dict[file.split(splitter)[0]] = func(file)
@@ -34,8 +36,8 @@ class DataProcessor:
         :return: Resampled data dictionary.
         """
         for ticker, ticker_data in data_dict.items():
-            data_dict[ticker] = ticker_data.resample(self.config["freq"]).agg(
-                self.config["features_config"]).reset_index()
+            data_dict[ticker] = ticker_data.resample(self.config["frequency"]).agg(
+                self.config["features_aggregation_config"]).reset_index()
         return data_dict
 
     @staticmethod
