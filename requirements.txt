@@ -10,3 +10,5 @@ scikit-learn==0.23.2
 fbprophet==0.7.1
 scipy==1.5.2
 tslearn==0.5.0.5
+setuptools~=57.4.0
+requests~=2.26.0

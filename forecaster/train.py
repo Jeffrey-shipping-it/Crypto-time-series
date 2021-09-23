@@ -9,10 +9,10 @@ import pandas as pd
 
 def training_pipeline(config_dict):
     processor = DataProcessor(config=config_dict)
-    data_dict = processor._fill_data_dict()
-    data_dict = processor._downsample_binance_data_dict(data_dict=data_dict)
-    data_dict = processor._filter_by_date(data_dict, '2019-01-01')
-    data_dict = processor._extract_ta_ind(data_dict)
+    data_dict = processor.fill_data_dict()
+    data_dict = processor.downsample_binance_data_dict(data_dict=data_dict)
+    data_dict = processor.filter_by_date(data_dict, '2019-01-01')
+    data_dict = processor.extract_ta_ind(data_dict)
     logging.info("preprocessing done")
     trainer = NeuralProphetFitting(pd.to_datetime("now"), data_dict, config_dict)
     data_dict = trainer.preprocess_prophet(data_dict)

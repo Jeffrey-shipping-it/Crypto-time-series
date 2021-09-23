@@ -3,16 +3,17 @@ import pandas_ta as ta
 import os
 import logging
 
+
 class DataProcessor:
     """
     Class containing related data handling methods to make pipelines.
     """
 
     def __init__(self, config):
+
         self.config = config
 
-    @staticmethod
-    def _fill_data_dict(fill_dir=os.listdir(), extension=".parquet", func=pd.read_parquet, splitter="-"):
+    def fill_data_dict(self, fill_dir=os.listdir(), extension=".parquet", func=pd.read_parquet, splitter="-"):
         """
         Fills up data dictionary from given directory, given a file format and corresponding function
         :param fill_dir: Directory to read from.
@@ -29,7 +30,7 @@ class DataProcessor:
             data_dict[file.split(splitter)[0]] = func(file)
         return data_dict
 
-    def _downsample_binance_data_dict(self, data_dict):
+    def downsample_binance_data_dict(self, data_dict):
         """
         Samples all data in dictionary to frequency given in config file.
         :param data_dict: data dict.
@@ -41,7 +42,7 @@ class DataProcessor:
         return data_dict
 
     @staticmethod
-    def _extract_ta_ind(data_dict):
+    def extract_ta_ind(data_dict):
         """
         Computes technical indicators for all data. For more info on possible indicators,
         visit pandas-ta documentation.
@@ -58,7 +59,7 @@ class DataProcessor:
         return data_dict
 
     @staticmethod
-    def _filter_by_date(data_dict, date_start=None, date_range=None):
+    def filter_by_date(data_dict, date_start=None, date_range=None):
         """
         filters training data by date before fitting. Date start and date range can be specified both,
         in which case they will be applied both.
